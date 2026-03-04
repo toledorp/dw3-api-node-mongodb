@@ -28,4 +28,37 @@ const createGame = async(req, res) => {
     }
 }
 
-export default { getAllGames, createGame }
+// função para tratar a requisição de ATUALIZAR um jogo
+const updateGame = async (req, res) => {
+    try{
+        const {id} = req.params
+        const {title, platform, year, price} = req.body
+        const updatedGame = await gameService.update(id, title, platform, year, price)
+        if(updatedGame){
+            res.status(200).json({message: 'Jogo atualizado com sucesso!', game: updatedGame})
+        }else{
+            res.status(404).json({message: 'Jogo não encontrado'})
+        }
+    }catch(error){
+        console.log(error)
+        res.status(500).json({error: 'Erro interno do servidor. Não foi possível atualizar o jogo'})
+    }
+}
+
+// função para tratar a requisição de DELETAR um jogo
+const deleteGame = async (req, res) => {
+    try{
+        const {id} = req.params
+        const deletedGame = await gameService.delete(id)
+        if(deletedGame){
+            res.status(200).json({message: 'Jogo deletado com sucesso!', game: deletedGame})
+        }else{
+            res.status(404).json({message: 'Jogo não encontrado'})
+        }
+    }catch(error){
+        console.log(error)
+        res.status(500).json({error: 'Erro interno do servidor. Não foi possível deletar o jogo'})
+    }
+}
+
+export default { getAllGames, createGame, updateGame, deleteGame }
