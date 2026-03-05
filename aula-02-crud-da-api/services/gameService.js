@@ -32,31 +32,30 @@ class gameService {
     }
   }
 
+  // método para deletar um game (delete)
+  async delete(id) {
+    try {
+      await Game.findByIdAndDelete(id);  // excluindo jogo pelo id
+      console.log(`Game com a id: ${id} foi deletado`)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // metodo para atualizar um game (update)
   async update(id, title, platform, year, price) {
     try {
-      const updatedGame = await Game.findByIdAndUpdate(
+      await Game.findByIdAndUpdate(
         id,
         { title, platform, year, price },
         { new: true, runValidators: true } // opção para retornar o documento atualizado e validar os dados
       );
-      return updatedGame; // retorna o game atualizado
+      console.log(`O jogo com a ID ${id} foi alterado.`)
     } catch (error) {
       console.log(error);
-      return null; // retorna null em caso de erro
     }
   }
 
-  // método para deletar um game (delete)
-  async delete(id) {
-    try {
-      const deletedGame = await Game.findByIdAndDelete(id);
-      return deletedGame; // retorna o game deletado
-    } catch (error) {
-      console.log(error);
-      return null; // retorna null em caso de erro
-    }
-  }
 
 }
 export default new gameService(); // exportando a classe
