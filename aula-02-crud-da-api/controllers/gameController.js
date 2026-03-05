@@ -1,5 +1,7 @@
 //importando o service
 import gameService from "../services/gameService.js";
+//importando ObjectId do mongodb
+import { ObjectId } from 'mongodb';
 
 //Funçao para tratar a requisiçao de listar os jogos
 const getAllGames = async (req, res) =>{
@@ -28,14 +30,30 @@ const createGame = async(req, res) => {
     }
 }
 
+// função para tratar a requisição de DELETAR um jogo
+const deleteGame = async (req, res) => {
+    try{
+        const id = req.params.id
+        if (ObjectId.isValid(id)){
+            await gameService.delete(id)
+            res.status(204).json({message : 'O jogo foi escluido com sucesso'})
+        }else{
+            res.status(400).json({ error: 'Ocorreu um erro na validação da ID'})
+        }
+    }catch(error){
+        console.log(error)
+        res.status(500).json({error: 'Erro interno do servidor. Não foi possível deletar o jogo'})
+    }
+}
+
 // função para tratar a requisição de ATUALIZAR um jogo
 const updateGame = async (req, res) => {
     try{
-        const {id} = req.params
-        const {title, platform, year, price} = req.body
-        const updatedGame = await gameService.update(id, title, platform, year, price)
-        if(updatedGame){
-            res.status(200).json({message: 'Jogo atualizado com sucesso!', game: updatedGame})
+        const id = req.params.id
+        if (ObjectId.isValid(id)){
+            const {title, platform, year, price} = req.body
+            await gameService.update(id, title, platform, year, price)
+            res.status(200).json({message: 'Jogo atualizado com sucesso!'})
         }else{
             res.status(404).json({message: 'Jogo não encontrado'})
         }
@@ -44,21 +62,4 @@ const updateGame = async (req, res) => {
         res.status(500).json({error: 'Erro interno do servidor. Não foi possível atualizar o jogo'})
     }
 }
-
-// função para tratar a requisição de DELETAR um jogo
-const deleteGame = async (req, res) => {
-    try{
-        const {id} = req.params
-        const deletedGame = await gameService.delete(id)
-        if(deletedGame){
-            res.status(200).json({message: 'Jogo deletado com sucesso!', game: deletedGame})
-        }else{
-            res.status(404).json({message: 'Jogo não encontrado'})
-        }
-    }catch(error){
-        console.log(error)
-        res.status(500).json({error: 'Erro interno do servidor. Não foi possível deletar o jogo'})
-    }
-}
-
 export default { getAllGames, createGame, updateGame, deleteGame }
