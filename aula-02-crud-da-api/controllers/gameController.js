@@ -1,4 +1,5 @@
 //importando o service
+import { ObjectId } from "mongodb";
 import gameService from "../services/gameService.js";
 
 //Funçao para tratar a requisiçao de listar os jogos
@@ -31,17 +32,17 @@ const createGame = async(req, res) => {
 // função para tratar a requisição de ATUALIZAR um jogo
 const updateGame = async (req, res) => {
     try{
-        const {id} = req.params
-        const {title, platform, year, price} = req.body
-        const updatedGame = await gameService.update(id, title, platform, year, price)
-        if(updatedGame){
-            res.status(200).json({message: 'Jogo atualizado com sucesso!', game: updatedGame})
-        }else{
-            res.status(404).json({message: 'Jogo não encontrado'})
+        const {id} = req.params.id
+        if(ObjectId.isValid){
+            const {title, platform, year, price } = req.body
+            const game = await gameService.update(id, title, platform, year, price)
+            res.status(200).json({message: 'Jogo atualizado com sucesso', game : game})
+        } else{
+            res.status(400).json({error: 'Ocorreu um erro na validação da ID.'})
         }
     }catch(error){
         console.log(error)
-        res.status(500).json({error: 'Erro interno do servidor. Não foi possível atualizar o jogo'})
+        res.status(500).json({error: 'Erro interno do servidor'})
     }
 }
 
@@ -61,4 +62,26 @@ const deleteGame = async (req, res) => {
     }
 }
 
-export default { getAllGames, createGame, updateGame, deleteGame }
+//função para listar um unico jogo
+const getOneGame = async (req, res) =>{
+    try{
+        const id = req.params.id
+        if(ObjectId.isValid(id)){
+            const game = await gameService.getOneGame(id)
+            //verificando se o jogo foi encontrado
+            if(!game){
+                res.status(404).json({message: 'Jogo buscado não foi encontrado'})
+            }else{
+                res.status(200).json({ game })
+            }
+        }else{ // se a id for invalida
+            res.status(400).json({error:'A ID é inválida'})
+            // COD 400 - BAD Request (requisição mal formada
+        }
+    }catch (error){
+        console.log(error)
+        res.status(500).json({error: 'Erro interno do servidor. Não foi possível consultar o jogo'})
+    }
+}
+
+export default { getAllGames, createGame, updateGame, deleteGame, getOneGame }

@@ -35,15 +35,14 @@ class gameService {
   // metodo para atualizar um game (update)
   async update(id, title, platform, year, price) {
     try {
-      const updatedGame = await Game.findByIdAndUpdate(
-        id,
+        await Game.findByIdAndUpdate(id,
         { title, platform, year, price },
-        { new: true, runValidators: true } // opção para retornar o documento atualizado e validar os dados
+        { new: true} // opção para retornar o documento atualizado e validar os dados
       );
+      console.log(`O jogo com ID ${id} foi alterado`)
       return updatedGame; // retorna o game atualizado
     } catch (error) {
       console.log(error);
-      return null; // retorna null em caso de erro
     }
   }
 
@@ -58,5 +57,14 @@ class gameService {
     }
   }
 
+  // metodo para lista um jogo unico
+  async getOneGame(id){
+    try{
+      const game = await Game.findOne({_id: id})
+      return game
+    }catch(error){
+      console.log(error)
+    }
+  }
 }
 export default new gameService(); // exportando a classe
