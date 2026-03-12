@@ -19,8 +19,8 @@ const createGame = async(req, res) => {
     try{
         //Desestruturação
         // coletadno os dados do corpo da requisição
-        const {title, platform, year, price} = req.body
-        await gameService.Create(title, platform, year, price)
+        const {title, year, price, descriptions} = req.body
+        await gameService.Create(title, year, price, descriptions)
         //res.sendStatus(201) - usado para enviar apenas o status
         res.status(201).json({message: 'O jogo foi cadastrado com sucesso!'})
         // cod. 201 - CREATE - Um novo recurso foi criado no servidor
@@ -51,8 +51,8 @@ const updateGame = async (req, res) => {
     try{
         const id = req.params.id
         if (ObjectId.isValid(id)){
-            const {title, platform, year, price} = req.body
-            await gameService.update(id, title, platform, year, price)
+            const {title, year, price, descriptions} = req.body
+            await gameService.update(id, title, year, price, descriptions)
             res.status(200).json({message: 'Jogo atualizado com sucesso!'})
         }else{
             res.status(404).json({message: 'Jogo não encontrado'})

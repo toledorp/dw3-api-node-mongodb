@@ -17,14 +17,14 @@ class gameService {
   }
 
   // método para cadastrar um game
-  async Create(title, platform, year, price) {
+  async Create(title, year, price, descriptions) {
     try {
       const newGame = new Game({
         //tecnica de desestruturação (destruction = forma sinplificada de escrever title: title)
         title,
-        platform,
         year,
         price,
+        descriptions
       });
       await newGame.save(); // .save()metodo do Mongose para cadastar no BD
     } catch (error) {
@@ -43,11 +43,14 @@ class gameService {
   }
 
   // metodo para atualizar um game (update)
-  async update(id, title, platform, year, price) {
+  async update(id, title, year, price, descriptions) {
     try {
       await Game.findByIdAndUpdate(
         id,
-        { title, platform, year, price },
+        { title, 
+          year, 
+          price, 
+          descriptions},
         { new: true, runValidators: true } // opção para retornar o documento atualizado e validar os dados
       );
       console.log(`O jogo com a ID ${id} foi alterado.`)
